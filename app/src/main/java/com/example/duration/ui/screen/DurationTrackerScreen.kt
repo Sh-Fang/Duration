@@ -8,12 +8,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.duration.viewmodel.DurationViewModel
 
 @RequiresApi(26)
 @Composable
-fun DurationTrackerScreen(viewModel: DurationViewModel = viewModel()) {
+fun DurationTrackerScreen(viewModel: DurationViewModel) {
     val state by viewModel.state.collectAsState()
 
     Column(

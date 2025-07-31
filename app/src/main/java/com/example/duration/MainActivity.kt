@@ -11,14 +11,21 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.duration.ui.screen.DurationTrackerScreen
 import com.example.duration.ui.theme.DurationTheme
+import com.example.duration.viewmodel.DurationViewModel
+import com.example.duration.work.WorkManagerHelper
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        
+        // Schedule reset works
+        WorkManagerHelper.scheduleResetWorks(this)
+        
         setContent {
             DurationTheme {
                 Scaffold { innerPadding ->
@@ -28,7 +35,8 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding)
                             .padding(16.dp)
                     ) {
-                        DurationTrackerScreen()
+                        val viewModel: DurationViewModel = viewModel()
+                        DurationTrackerScreen(viewModel)
                     }
                 }
             }
