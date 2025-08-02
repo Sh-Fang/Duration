@@ -87,7 +87,7 @@ data class DurationData(
 object DurationUtils {
     @RequiresApi(Build.VERSION_CODES.O)
     fun calculateCycles(today: LocalDate, now: LocalDateTime = LocalDateTime.now()): Int {
-        val start = LocalDateTime.of(today, LocalTime.of(10, 30))
+        val start = LocalDateTime.of(today, LocalTime.of(19, 30))
         return if (now.isAfter(start)) {
             (Duration.between(start, now).toMinutes() / 30).toInt()
         } else 0

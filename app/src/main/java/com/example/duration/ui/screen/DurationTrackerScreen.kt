@@ -11,12 +11,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.duration.viewmodel.DurationViewModel
+import java.time.format.DateTimeFormatter
 
 @RequiresApi(26)
 @Composable
 fun DurationTrackerScreen(viewModel: DurationViewModel) {
     val state by viewModel.state.collectAsState()
     var showClearConfirmDialog by remember { mutableStateOf(false) }
+
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
     if (showClearConfirmDialog) {
         AlertDialog(
@@ -83,7 +86,7 @@ fun DurationTrackerScreen(viewModel: DurationViewModel) {
 
             state.lastCheckIn?.let {
                 Text(
-                    text = "上次打卡：${it.toLocalTime().withSecond(0).withNano(0)}",
+                    text = "上次打卡：${it.format(formatter)}",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 16.dp) // Added some bottom padding
