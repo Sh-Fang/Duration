@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Duration</string>
+    <string name="accessibility_description">检测打卡并且记录加班时长</string>
 </resources>
