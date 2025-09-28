@@ -12,6 +12,10 @@ import java.util.Locale
 class AccessibilityService: AccessibilityService() {
     private var lastCheckedPage: String? = null
 
+
+    private var isTitleTextShow: Boolean = false
+    private var isTargetTextShow: Boolean = false
+
     // 定义日期格式
     val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
@@ -37,22 +41,39 @@ class AccessibilityService: AccessibilityService() {
         }
 
         lastCheckedPage = currentPage
-        checkScreenText(event.source)
+
+        isTitleTextShow = false
+        isTargetTextShow = false
+
+        if (checkScreenText(event.source)){
+            recordOccurrenceTime()
+        }
     }
 
     // 检测文字
-    private fun checkScreenText(node: AccessibilityNodeInfo?) {
-        if (node == null) return
+    private fun checkScreenText(node: AccessibilityNodeInfo?): Boolean {
+        if (node == null) return false
+
+        if (node.text?.contains(Global.TITLE_TEXT) == true) {
+            isTitleTextShow = true
+        }
 
         // 遍历节点树
         if (node.text?.contains(Global.TARGET_TEXT) == true) {
-            recordOccurrenceTime()
-            return
+            isTargetTextShow = true
+        }
+
+        if (isTargetTextShow && isTitleTextShow){
+            return true
         }
 
         for (i in 0 until node.childCount) {
-            checkScreenText(node.getChild(i))
+            if (checkScreenText(node.getChild(i))) {
+                return true
+            }
         }
+
+        return false
     }
 
     // 遍历节点检测
