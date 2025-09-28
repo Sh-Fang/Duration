@@ -48,12 +48,6 @@ class MainActivity : ComponentActivity() {
                     ) {
                         val context = LocalContext.current
 
-                        // 进入页面时检测一次
-                        LaunchedEffect(Unit) {
-                            isEnabled.value = isAccessibilityServiceEnabled(context, AccessibilityService::class.java)
-                        }
-
-
                         Column (
                             modifier = Modifier
                                 .fillMaxSize()
@@ -68,7 +62,7 @@ class MainActivity : ComponentActivity() {
                                 checked = isEnabled.value,
                                 // 切换开关时去无障碍设置界面
                                 onCheckedChange = { checked ->
-                                    openAccessibilitySettings(this@MainActivity)
+                                    openAccessibilitySettings(context)
                                 },
                                 colors = SwitchDefaults.colors(
                                     checkedThumbColor = Color.White,
@@ -85,25 +79,6 @@ class MainActivity : ComponentActivity() {
 
                         }
 
-
-                        // 当用户切回App时自动刷新
-                        // DisposableEffect：在某个 Composable 生命周期内申请资源，并在退出时释放资源
-                        // 进入页面（不是重绘UI），执行DisposableEffect里面的逻辑；退出页面，执行onDispose的逻辑
-                        DisposableEffect(Unit) {
-                            // 创建无障碍监听器，当监听到无障碍变动的时候，执行里面的逻辑
-                            val listener = AccessibilityManager.AccessibilityStateChangeListener {
-                                isEnabled.value = isAccessibilityServiceEnabled(this@MainActivity, AccessibilityService::class.java)
-                            }
-
-                            // 获取无障碍管理器，并且把这个监听器注册进去
-                            val am = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-                            am.addAccessibilityStateChangeListener(listener)
-
-                            // 在compose销毁的时候，删除这个监听器
-                            onDispose {
-                                am.removeAccessibilityStateChangeListener(listener)
-                            }
-                        }
                     }
                 }
             }
