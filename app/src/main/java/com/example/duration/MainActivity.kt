@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.example.duration.sharedPreferences.AttendancePrefs
 
 class MainActivity : ComponentActivity() {
     // 无障碍是否开启的标志
@@ -36,6 +37,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // 每次启动应用时，检查是否需要结算昨天的加班
+        AttendancePrefs.accumulateOvertimeIfNewDay(this)
 
 
         setContent {
@@ -48,6 +52,9 @@ class MainActivity : ComponentActivity() {
                             .padding(16.dp)
                     ) {
                         val context = LocalContext.current
+
+                        val firstTime = remember { AttendancePrefs.getFirstTime(context) }
+                        val lastTime = remember { AttendancePrefs.getLastTime(context) }
 
                         Column (
                             modifier = Modifier
@@ -78,6 +85,22 @@ class MainActivity : ComponentActivity() {
 
                             Text("无障碍是否开启: ${if (isEnabled.value) "已开启" else "未开启"}")
 
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text("最早打卡时间: $firstTime")
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text("最晚打卡时间: $lastTime")
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text("今日加班: ${AttendancePrefs.getTodayOvertime(context)}")
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text("累计加班: ${AttendancePrefs.getTotalOvertime(context)}")
+
                         }
 
                     }
@@ -90,6 +113,9 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         // 每次回到前台时刷新状态
         isEnabled.value = isAccessibilityServiceEnabled(this, AccessibilityService::class.java)
+
+        // 检查是否需要结算昨天的加班
+        AttendancePrefs.accumulateOvertimeIfNewDay(this)
     }
 }
 

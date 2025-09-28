@@ -4,8 +4,8 @@ import android.accessibilityservice.AccessibilityService
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.duration.sharedPreferences.AttendancePrefs
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 
@@ -18,7 +18,6 @@ class AccessibilityService: AccessibilityService() {
 
     // 定义日期格式
     val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-
 
     // 监听无障碍事件
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -76,16 +75,13 @@ class AccessibilityService: AccessibilityService() {
         return false
     }
 
-    // 遍历节点检测
+    // 写入记录
     private fun recordOccurrenceTime() {
         // 当前时间
-        val timestamp = System.currentTimeMillis()
-        // 格式化成字符串
-        val formattedTime = sdf.format(Date(timestamp))
+        val now = System.currentTimeMillis()
 
-        Log.d(Global.LOG_TAG, "文字首次出现时间: $formattedTime")
-
-        // 也可以存入 SharedPreferences 或数据库
+        AttendancePrefs.saveFirstTime(this, now)
+        AttendancePrefs.saveLastTime(this, now)
     }
 
 
