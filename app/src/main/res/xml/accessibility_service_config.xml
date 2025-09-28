@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+ android:packageNames="com.ss.android.lark.kaahyz17"
+
+ 这一句配置代表只监听i讯飞这个软件,i讯飞的packageName是com.ss.android.lark.kaahyz17
+ -->
+
 <accessibility-service
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/accessibility_description"
-    android:packageNames=""
-    android:accessibilityEventTypes="typeAllMask"
+    android:packageNames="com.ss.android.lark.kaahyz17"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeAllMask"
     android:accessibilityFeedbackType="feedbackGeneric"
-    android:notificationTimeout="100"
+    android:notificationTimeout="500"
     android:canRetrieveWindowContent="true"
     android:accessibilityFlags="flagDefault" />

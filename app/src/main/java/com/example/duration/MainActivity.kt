@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.duration.ui.theme.DurationTheme
 import android.content.Intent
+import android.util.Log
 import android.view.accessibility.AccessibilityManager
 import androidx.compose.material3.Button
 import androidx.compose.material3.Switch
@@ -113,9 +114,12 @@ fun isAccessibilityServiceEnabled(context: Context, service: Class<out Accessibi
     while (colonSplitter.hasNext()) {
         val componentName = colonSplitter.next()
         if (componentName.equals(serviceName, ignoreCase = true)) {  // 忽略大小写比较是否相同字符串
+            Log.d(Global.LOG_TAG,"无障碍已开启 Success")
             return true
         }
     }
+
+    Log.d(Global.LOG_TAG,"无障碍未开启 False")
     return false
 }
 
