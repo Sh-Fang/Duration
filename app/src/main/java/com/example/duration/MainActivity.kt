@@ -29,6 +29,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 class MainActivity : ComponentActivity() {
+    // 无障碍是否开启的标志
+    private val isEnabled = mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +47,6 @@ class MainActivity : ComponentActivity() {
                             .padding(16.dp)
                     ) {
                         val context = LocalContext.current
-
-                        val isEnabled = remember {
-                            mutableStateOf(isAccessibilityServiceEnabled(context, AccessibilityService::class.java))
-                        }
 
                         // 进入页面时检测一次
                         LaunchedEffect(Unit) {
@@ -110,6 +108,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 每次回到前台时刷新状态
+        isEnabled.value = isAccessibilityServiceEnabled(this, AccessibilityService::class.java)
     }
 }
 
