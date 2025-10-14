@@ -1,4 +1,4 @@
-package com.example.duration
+package com.example.duration.constant
 
 object Global {
     const val LOG_TAG = "DurationLogTag"

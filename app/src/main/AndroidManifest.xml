@@ -25,7 +25,7 @@
         </activity>
 
         <!--把服务挂到系统的无障碍列表里-->
-        <service android:name=".AccessibilityService"
+        <service android:name=".service.AccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:enabled="true"
             android:exported="true"

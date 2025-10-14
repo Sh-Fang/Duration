@@ -19,16 +19,27 @@ import androidx.compose.ui.unit.dp
 import com.example.duration.ui.theme.DurationTheme
 import android.content.Intent
 import android.util.Log
-import android.view.accessibility.AccessibilityManager
+import androidx.compose.foundation.background
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.example.duration.constant.Global
+import com.example.duration.logManager.LogManager
+import com.example.duration.service.AccessibilityService
 import com.example.duration.sharedPreferences.AttendancePrefs
+import com.example.duration.ui.composable.AccessibilitySwitch
+import com.example.duration.ui.composable.AttendanceRecord
+import com.example.duration.ui.composable.LogView
 
 class MainActivity : ComponentActivity() {
     // 无障碍是否开启的标志
@@ -53,9 +64,6 @@ class MainActivity : ComponentActivity() {
                     ) {
                         val context = LocalContext.current
 
-                        val firstTime = remember { AttendancePrefs.getFirstTime(context) }
-                        val lastTime = remember { AttendancePrefs.getLastTime(context) }
-
                         Column (
                             modifier = Modifier
                                 .fillMaxSize()
@@ -64,43 +72,30 @@ class MainActivity : ComponentActivity() {
                             horizontalAlignment = Alignment.CenterHorizontally // 水平居中
                         ){
 
-
-
-                            Switch(
-                                checked = isEnabled.value,
-                                // 切换开关时去无障碍设置界面
-                                onCheckedChange = { checked ->
-                                    openAccessibilitySettings(context)
-                                },
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color.White,
-                                    uncheckedThumbColor = Color.White,
-                                    checkedTrackColor = Color(0xFF4CAF50),   // 开启时轨道绿色
-                                    uncheckedTrackColor = Color(0xFFF44336)  // 关闭时轨道红色
-                                )
-
+                            // 无障碍开关
+                            AccessibilitySwitch(
+                                isEnabled = isEnabled,
+                                context = context,
+                                // 回调函数，打开无障碍设置
+                                openAccessibilitySettings = { ctx ->
+                                    openAccessibilitySettings(ctx)
+                                }
                             )
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            Text("无障碍是否开启: ${if (isEnabled.value) "已开启" else "未开启"}")
+
+                            // 打卡记录显示
+                            AttendanceRecord()
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            Text("最早打卡时间: $firstTime")
+                            // 日志输出框
+                            LogView()
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            Text("最晚打卡时间: $lastTime")
-
                             Spacer(modifier = Modifier.height(16.dp))
-
-                            Text("今日加班: ${AttendancePrefs.getTodayOvertime(context)}")
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text("累计加班: ${AttendancePrefs.getTotalOvertime(context)}")
-
                         }
 
                     }
@@ -141,11 +136,13 @@ fun isAccessibilityServiceEnabled(context: Context, service: Class<out Accessibi
         val componentName = colonSplitter.next()
         if (componentName.equals(serviceName, ignoreCase = true)) {  // 忽略大小写比较是否相同字符串
             Log.d(Global.LOG_TAG,"无障碍已开启 Success")
+            LogManager.add("无障碍已开启 Success")
             return true
         }
     }
 
     Log.d(Global.LOG_TAG,"无障碍未开启 False")
+    LogManager.add("无障碍未开启 False")
     return false
 }
 

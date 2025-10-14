@@ -1,0 +1,36 @@
+package com.example.duration.ui.composable
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.duration.viewmodel.AttendanceViewModel
+import com.example.duration.viewmodel.AttendanceViewModelFactory
+
+@Composable
+fun AttendanceRecord(
+    viewModel: AttendanceViewModel = viewModel(
+        factory = AttendanceViewModelFactory(LocalContext.current)
+    ),
+    modifier: Modifier = Modifier
+) {
+    val firstTime by viewModel.firstTime
+    val lastTime by viewModel.lastTime
+
+    Column(
+        modifier = modifier
+            .padding(16.dp)
+    ) {
+        Text("最早打卡时间: $firstTime")
+        Text("最晚打卡时间: $lastTime")
+    }
+}

@@ -1,13 +1,13 @@
-package com.example.duration
+package com.example.duration.service
 
 import android.accessibilityservice.AccessibilityService
-import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import com.example.duration.constant.Global
+import com.example.duration.logManager.LogManager
 import com.example.duration.sharedPreferences.AttendancePrefs
 import java.text.SimpleDateFormat
 import java.util.Locale
-
 
 class AccessibilityService: AccessibilityService() {
     private var lastCheckedPage: String? = null
@@ -15,9 +15,6 @@ class AccessibilityService: AccessibilityService() {
 
     private var isTitleTextShow: Boolean = false
     private var isTargetTextShow: Boolean = false
-
-    // 定义日期格式
-    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
     // 监听无障碍事件
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -54,15 +51,18 @@ class AccessibilityService: AccessibilityService() {
         if (node == null) return false
 
         if (node.text?.contains(Global.TITLE_TEXT) == true) {
+            LogManager.add("检测到${Global.TITLE_TEXT}")
             isTitleTextShow = true
         }
 
         // 遍历节点树
         if (node.text?.contains(Global.TARGET_TEXT) == true) {
+            LogManager.add("检测到${Global.TARGET_TEXT}")
             isTargetTextShow = true
         }
 
         if (isTargetTextShow && isTitleTextShow){
+            LogManager.add("同时检测到${Global.TITLE_TEXT}和${Global.TARGET_TEXT}")
             return true
         }
 
@@ -79,6 +79,8 @@ class AccessibilityService: AccessibilityService() {
     private fun recordOccurrenceTime() {
         // 当前时间
         val now = System.currentTimeMillis()
+
+        LogManager.add("记录打卡时间")
 
         AttendancePrefs.saveFirstTime(this, now)
         AttendancePrefs.saveLastTime(this, now)
