@@ -18,11 +18,15 @@ object AttendancePrefs {
     private val sdfTime = SimpleDateFormat("HH:mm", Locale.getDefault())
     private val sdfDate = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
 
+    fun formatTimestamp(timestamp: Long): String{
+        return sdfTime.format(timestamp)
+    }
+
     fun saveFirstTime(context: Context, timestamp: Long) {
         val sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         val current = sp.getLong(KEY_FIRST, 0L)
         if (current == 0L || timestamp < current) {
-            sp.edit().putLong(KEY_FIRST, timestamp).apply()
+            sp.edit { putLong(KEY_FIRST, timestamp) }
         }
     }
 

@@ -16,17 +16,19 @@ class AttendanceViewModel(private val context: Context) : ViewModel() {
 
     // 保存最早打卡时间
     fun saveFirstTime(timestamp: Long) {
-        AttendancePrefs.saveFirstTime(context, timestamp)
-        _firstTime.value = AttendancePrefs.getFirstTime(context) // 更新 UI
+        val formatted = AttendancePrefs.formatTimestamp(timestamp)
+        _firstTime.value = formatted             // 立即刷新 UI
+        AttendancePrefs.saveFirstTime(context, timestamp) // 异步落盘
     }
 
     // 保存最晚打卡时间
     fun saveLastTime(timestamp: Long) {
+        val formatted = AttendancePrefs.formatTimestamp(timestamp)
+        _lastTime.value = formatted;
         AttendancePrefs.saveLastTime(context, timestamp)
-        _lastTime.value = AttendancePrefs.getLastTime(context) // 更新 UI
     }
 
-    // 可选：刷新状态（从持久化读取）
+    // 刷新状态（从持久化读取）
     fun refreshTimes() {
         _firstTime.value = AttendancePrefs.getFirstTime(context)
         _lastTime.value = AttendancePrefs.getLastTime(context)
