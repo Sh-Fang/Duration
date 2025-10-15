@@ -1,12 +1,11 @@
-package com.example.duration.sharedPreferences
+package com.example.duration.store
 
-import android.annotation.SuppressLint
 import android.content.Context
+import androidx.core.content.edit
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import androidx.core.content.edit
-import java.util.Calendar
 
 object AttendancePrefs {
     private const val PREF_NAME = "attendance_prefs"
@@ -15,11 +14,14 @@ object AttendancePrefs {
     private const val KEY_TOTAL_OVERTIME = "total_overtime" // 累计加班时长，单位：分钟
     private const val KEY_LAST_DATE = "last_date"           // 上次记录的日期，用来判断是否换天
 
-    private val sdfTime = SimpleDateFormat("HH:mm", Locale.getDefault())
-    private val sdfDate = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+    fun formatTime(timestamp: Long): String {
+        val sdfTime = SimpleDateFormat("HH:mm", Locale.getDefault())
+        return sdfTime.format(Date(timestamp))
+    }
 
-    fun formatTimestamp(timestamp: Long): String{
-        return sdfTime.format(timestamp)
+    fun formatDate(date: Date): String {
+        val sdfDate = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+        return sdfDate.format(date)
     }
 
     fun saveFirstTime(context: Context, timestamp: Long) {
@@ -41,13 +43,13 @@ object AttendancePrefs {
     fun getFirstTime(context: Context): String {
         val ts = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
             .getLong(KEY_FIRST, 0L)
-        return if (ts > 0) sdfTime.format(Date(ts)) else "--:--"
+        return if (ts > 0) formatTime(ts) else "--:--"
     }
 
     fun getLastTime(context: Context): String {
         val ts = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
             .getLong(KEY_LAST, 0L)
-        return if (ts > 0) sdfTime.format(Date(ts)) else "--:--"
+        return if (ts > 0) formatTime(ts) else "--:--"
     }
 
     // 计算今日加班时长（分钟）
@@ -81,7 +83,7 @@ object AttendancePrefs {
     // 累计加班时长（每天只算一次）
     fun accumulateOvertimeIfNewDay(context: Context) {
         val sp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        val today = sdfDate.format(Date())
+        val today = formatDate(Date())
         val lastDate = sp.getString(KEY_LAST_DATE, "")
 
         if (today != lastDate) {

@@ -1,11 +1,8 @@
 package com.example.duration.ui.composable
 
+import android.app.Application
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,11 +19,16 @@ import com.example.duration.viewmodel.AttendanceViewModelFactory
 
 @Composable
 fun AttendanceRecord(
-    viewModel: AttendanceViewModel = viewModel(
-        factory = AttendanceViewModelFactory(LocalContext.current)
-    ),
     modifier: Modifier = Modifier
 ) {
+    // 获取 Application Context
+    val application = LocalContext.current.applicationContext as Application
+
+    // 使用安全的 Factory 创建 ViewModel
+    val viewModel: AttendanceViewModel = viewModel(
+        factory = AttendanceViewModelFactory(application)
+    )
+
     val lifecycleOwner = LocalLifecycleOwner.current
 
     // 当生命周期进入 RESUME 时自动刷新
