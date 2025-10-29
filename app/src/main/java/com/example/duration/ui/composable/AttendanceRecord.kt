@@ -45,7 +45,7 @@ fun AttendanceRecord(
         modifier = modifier
             .padding(16.dp)
     ) {
-        Text("最早打卡时间: $firstTime")
-        Text("最晚打卡时间: $lastTime")
+        Text("最早打卡: ${firstTime ?: "--"}")
+        Text("最晚打卡: ${lastTime ?: "--"}")
     }
 }

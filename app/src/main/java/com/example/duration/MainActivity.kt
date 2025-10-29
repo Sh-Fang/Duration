@@ -30,6 +30,7 @@ import com.example.duration.ui.composable.LogView
 class MainActivity : ComponentActivity() {
     // 无障碍是否开启的标志
     private val isEnabled = mutableStateOf(false)
+    val service = AccessibilityService()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
                                 context = context,
                                 // 回调函数，打开无障碍设置
                                 openAccessibilitySettings = { ctx ->
-                                    AccessibilityService.openAccessibilitySettings(ctx)
+                                    service.openAccessibilitySettings(ctx)
                                 }
                             )
                             Spacer(modifier = Modifier.height(16.dp))
@@ -85,7 +86,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         // 每次回到前台时刷新状态
-        isEnabled.value = AccessibilityService.isAccessibilityServiceEnabled(this, AccessibilityService::class.java)
+        isEnabled.value = service.isAccessibilityServiceEnabled(this, AccessibilityService::class.java)
 
         // 检查是否需要结算昨天的加班
         AttendancePrefs.accumulateOvertimeIfNewDay(this)

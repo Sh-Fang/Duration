@@ -1,9 +1,11 @@
 package com.example.duration.service
 
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.example.duration.constant.Global
 import com.example.duration.logManager.LogManager
+import com.example.duration.store.DataRepository
 
 
 object TextDetectorService {
@@ -28,9 +30,11 @@ object TextDetectorService {
 
         // 递归检查
         if (isTextExist(event.source)){
+            Log.d("TextDetectorService","打卡记录成功")
             LogManager.add("打卡记录成功")
-            // 如果找到
-            RecordService.saveRecord()
+            // 如果找到，更新全局状态
+            DataRepository.updateEarliestClockIn(System.currentTimeMillis())
+            DataRepository.updateLatestClockIn(System.currentTimeMillis())
         }
     }
 

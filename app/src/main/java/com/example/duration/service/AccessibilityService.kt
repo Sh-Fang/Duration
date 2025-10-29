@@ -11,10 +11,11 @@ import android.view.accessibility.AccessibilityEvent
 import com.example.duration.constant.Global
 import com.example.duration.logManager.LogManager
 
-object AccessibilityService: AccessibilityService() {
+class AccessibilityService: AccessibilityService() {
 
     override fun onServiceConnected() {
         LogManager.add("AccessibilityService 已连接")
+        Log.d(Global.LOG_TAG,"AccessibilityService 已连接")
     }
 
     // 监听无障碍事件
@@ -30,6 +31,7 @@ object AccessibilityService: AccessibilityService() {
 
     override fun onInterrupt() {
         LogManager.add("AccessibilityService 被中断")
+        Log.d(Global.LOG_TAG,"AccessibilityService 被中断")
     }
 
     /** 检测是否开启 */
