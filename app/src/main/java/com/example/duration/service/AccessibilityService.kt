@@ -20,10 +20,20 @@ class AccessibilityService: AccessibilityService() {
 
     // 监听无障碍事件
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        event?.let {
-            when (event.eventType) {
-                AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED -> {
-                    TextDetectorService.handleWindowChange(event)
+        event ?: return
+        if (event.eventType == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED ||
+            event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+            // 延迟十几毫秒后再抓树，避免过早拿到空树
+            val svc = this
+            val captured = AccessibilityEvent.obtain(event)
+            mainExecutor.execute {
+                svc.mainLooper.queue.addIdleHandler {
+                    // 再次轻微延时（~16ms）
+                    svc.mainExecutor.execute {
+                        TextDetectorService.handleWindowChange(svc, captured)
+                        captured.recycle()
+                    }
+                    false
                 }
             }
         }

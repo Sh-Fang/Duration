@@ -10,8 +10,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/accessibility_description"
     android:packageNames="com.ss.android.lark.kaahyz17"
-    android:accessibilityEventTypes="typeWindowStateChanged|typeAllMask"
+    android:accessibilityEventTypes="typeWindowContentChanged|typeWindowStateChanged"
     android:accessibilityFeedbackType="feedbackGeneric"
-    android:notificationTimeout="500"
+    android:notificationTimeout="200"
     android:canRetrieveWindowContent="true"
-    android:accessibilityFlags="flagDefault" />
+    android:accessibilityFlags="flagDefault|flagReportViewIds|flagIncludeNotImportantViews" />

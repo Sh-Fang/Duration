@@ -11,6 +11,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,7 +24,8 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.duration.constant.Global
 import com.example.duration.logManager.LogManager
 import com.example.duration.service.AccessibilityService
-import com.example.duration.store.AttendancePrefs
+import androidx.lifecycle.lifecycleScope
+import com.example.duration.store.AttendanceStore
 import com.example.duration.ui.composable.AccessibilitySwitch
 import com.example.duration.ui.composable.AttendanceRecord
 import com.example.duration.ui.composable.LogView
@@ -73,7 +76,7 @@ class MainActivity : ComponentActivity() {
 
                             // 日志输出框
                             LogView()
-                            Spacer(modifier = Modifier.height(16.dp))
+
 
                         }
 
@@ -88,7 +91,9 @@ class MainActivity : ComponentActivity() {
         // 每次回到前台时刷新状态
         isEnabled.value = service.isAccessibilityServiceEnabled(this, AccessibilityService::class.java)
 
-        // 检查是否需要结算昨天的加班
-        AttendancePrefs.accumulateOvertimeIfNewDay(this)
+        // 检查是否需要结算昨天的加班（DataStore）
+        lifecycleScope.launchWhenResumed {
+            AttendanceStore.accumulateOvertimeIfNewDay(this@MainActivity)
+        }
     }
 }

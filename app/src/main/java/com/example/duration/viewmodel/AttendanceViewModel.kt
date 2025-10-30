@@ -6,7 +6,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.duration.store.AttendancePrefs
+import com.example.duration.store.AttendanceStore
 import com.example.duration.store.DataRepository
 import kotlinx.coroutines.launch
 
@@ -28,28 +28,30 @@ class AttendanceViewModel(application: Application) : AndroidViewModel(applicati
 
     // 保存最早打卡时间
     fun saveFirstTime(timestamp: Long) {
-        val formatted = AttendancePrefs.formatTime(timestamp)
+        val formatted = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(java.util.Date(timestamp))
         _firstTime.value = formatted               // 立即刷新 UI
         DataRepository.updateEarliestClockIn(timestamp) // 更新全局状态
         // 异步落盘
         viewModelScope.launch {
-            AttendancePrefs.saveFirstTime(appContext, timestamp)
+            AttendanceStore.saveFirstTime(appContext, timestamp)
         }
     }
 
     // 保存最晚打卡时间
     fun saveLastTime(timestamp: Long) {
-        val formatted = AttendancePrefs.formatTime(timestamp)
+        val formatted = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(java.util.Date(timestamp))
         _lastTime.value = formatted
         DataRepository.updateLatestClockIn(timestamp)
         viewModelScope.launch {
-            AttendancePrefs.saveLastTime(appContext, timestamp)
+            AttendanceStore.saveLastTime(appContext, timestamp)
         }
     }
 
     // 刷新状态（从持久化读取）
     fun refreshTimes() {
-        _firstTime.value = AttendancePrefs.getFirstTime(appContext)
-        _lastTime.value = AttendancePrefs.getLastTime(appContext)
+        viewModelScope.launch {
+            _firstTime.value = AttendanceStore.getFirstTimeString(appContext)
+            _lastTime.value = AttendanceStore.getLastTimeString(appContext)
+        }
     }
 }
